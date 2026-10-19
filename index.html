@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="es">
+ <head>
+  <meta charset="utf-8"/>
+  <meta content="width=device-width,initial-scale=1" name="viewport"/>
+  <title>
+   Monitor FEN | Los Andes
+  </title>
+  <style>
+   :root{
+    font-family:Inter,Segoe UI,Arial,sans-serif;
+    color:#f3f4f6;
+    background:#1c1c1e
+}
+*{
+    box-sizing:border-box
+}
+body{
+    margin:0
+}
+header{
+    background:#59c3f0;
+    color:#122744;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:12px 3%;
+    gap:12px;
+    flex-wrap:wrap
+}
+.logo{
+    font-size:22px;
+    font-weight:850;
+    color:white;
+    line-height:1
+}
+nav{
+    display:flex;
+    gap:8px
+}
+button{
+    cursor:pointer;
+    font:inherit
+}
+nav button,.primary{
+    border:0;
+    border-radius:14px;
+    padding:12px 20px;
+    background:transparent;
+    color:inherit
+}
+nav button.active,.primary{
+    background:#193b6c;
+    color:white;
+    font-weight:650
+}
+main{
+    max-width:1400px;
+    margin:auto;
+    padding:16px 2.5%
+}
+.hero{
+    border-radius:38px;
+    padding:60px;
+    background:linear-gradient(125deg,#283d60,#7e899e 58%,#c5a78c);
+    min-height:350px
+}
+.hero h1{
+    font-size:clamp(40px,5vw,72px);
+    margin:22px 0
+}
+.hero p{
+    font-size:22px;
+    font-weight:600
+}
+.chip{
+    display:inline-block;
+    border:1px solid #9da8b9;
+    border-radius:24px;
+    padding:10px 14px;
+    background:#273d62
+}
+.stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    margin:20px 0
+}
+.card,.stats{
+    background:#29292c;
+    border:1px solid #3b3b40;
+    border-radius:20px
+}
+.stat{
+    padding:28px;
+    border-right:1px solid #3c3c42
+}
+.stat:last-child{
+    border:0
+}
+.num{
+    font-size:40px
+}
+.muted{
+    color:#a6a6ad
+}
+.layout{
+    display:grid;
+    grid-template-columns:1.55fr 1fr;
+    gap:20px
+}
+.card{
+    padding:30px;
+    margin-bottom:20px
+}
+h2{
+    margin:0 0 8px
+}
+.map{
+    height:400px;
+    display:grid;
+    place-items:center;
+    color:#aeb1bb;
+    border:1px dashed #4b4b53;
+    border-radius:12px;
+    margin:20px 0
+}
+.bar{
+    height:34px;
+    background:#f5f5f7;
+    border-radius:4px;
+    width:70%;
+    margin:30px 0 20px 25%
+}
+.qr{
+    background:white;
+    color:#123a65;
+    padding:25px;
+    border-radius:12px;
+    font-weight:700;
+    display:inline-block
+}
+.modalback{
+    position:fixed;
+    inset:0;
+    background:#000b;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:15px;
+    z-index:20
+}
+.modalback.open{
+    display:flex
+}
+.modal{
+    background:#29292e;
+    border:1px solid #555;
+    border-radius:20px;
+    width:min(720px,100%);
+    max-height:94vh;
+    overflow:auto;
+    padding:26px
+}
+.modalhead{
+    display:flex;
+    justify-content:space-between;
+    align-items:center
+}
+.close{
+    background:none;
+    border:0;
+    color:white;
+    font-size:30px
+}
+.formgrid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:16px
+}
+label{
+    display:block;
+    color:#d0d0d7;
+    font-size:14px;
+    margin-bottom:6px
+}
+input,select,textarea{
+    width:100%;
+    background:#1d1d21;
+    color:white;
+    border:1px solid #555;
+    border-radius:9px;
+    padding:12px;
+    font:inherit
+}
+textarea{
+    min-height:90px
+}
+.wide{
+    grid-column:1/-1
+}
+.actions{
+    display:flex;
+    justify-content:flex-end;
+    gap:12px;
+    margin-top:22px
+}
+.secondary{
+    border:1px solid #666;
+    background:transparent;
+    color:white;
+    border-radius:10px;
+    padding:12px 20px
+}
+.notice{
+    font-size:13px;
+    color:#bac5d3;
+    margin-top:12px
+}
+section[hidden]{
+    display:none!important
+}
+table{
+    width:100%;
+    border-collapse:collapse
+}
+td,th{
+    text-align:left;
+    padding:14px;
+    border-bottom:1px solid #414147
+}
+footer{
+    padding:25px;
+    color:#999;
+    border-top:1px solid #333
+}
+@media(max-width:760px){
+    .stats{
+        grid-template-columns:1fr 1fr
+    }
+    .layout,.formgrid{
+        grid-template-columns:1fr
+    }
+    .hero{
+        padding:32px
+    }
+    .stat{
+        padding:18px
+    }
+    .wide{
+        grid-column:auto
+    }
+}
+  </style>
+ </head>
+ <body>
+  <header>
+   <div class="logo">
+    A │ LOS
+    <br/>
+    ANDES
+   </div>
+   <nav>
+    <button class="tab active" data-tab="monitor">
+     Monitor
+    </button>
+    <button id="reportBtn">
+     Reportar
+    </button>
+    <button class="tab" data-tab="noticias">
+     Noticias
+    </button>
+    <button class="tab" data-tab="dashboard">
+     Dashboard 🔒
+    </button>
+   </nav>
+   <span>
+    Monitor FEN · 2026
+   </span>
+  </header>
+  <main>
+   <section id="monitor">
+    <div class="hero">
+     <span class="chip">
+      Caja Los Andes · Fenómeno El Niño
+     </span>
+     <h1>
+      Monitor
+      <br/>
+      Fenómeno El Niño
+     </h1>
+     <p>
+      Incidencias reportadas por colaboradores de
+      <br/>
+      Los Andes
+     </p>
+    </div>
+    <div class="stats">
+     <div class="stat">
+      <div class="num" id="total">
+       0
+      </div>
+      <div class="muted">
+       Total de reportes (sesión)
+      </div>
+     </div>
+     <div class="stat">
+      <div class="num" id="deptCount">
+       0
+      </div>
+      <div class="muted">
+       Departamentos afectados
+      </div>
+     </div>
+     <div class="stat">
+      <div class="num" id="districtCount">
+       0
+      </div>
+      <div class="muted">
+       Distritos afectados
+      </div>
+     </div>
+     <div class="stat">
+      <div class="num" id="lastDate">
+       —
+      </div>
+      <div class="muted">
+       Último reporte
+      </div>
+     </div>
+    </div>
+    <div class="layout">
+     <article class="card">
+      <h2>
+       Reportes por departamento
+      </h2>
+      <div class="muted">
+       Nivel de alerta según número de reportes
+      </div>
+      <p>
+       <label for="filterDept">
+        Ver tipos de fenómeno de
+       </label>
+       <select id="filterDept">
+        <option>
+         Todo el Perú
+        </option>
+       </select>
+      </p>
+      <div class="map">
+       Mapa geográfico: requiere GeoJSON de departamentos del Perú
+      </div>
+      <small class="muted">
+       🟩 Baja (1–4)　🟨 Media (5–14)　🟥 Alta (15+)
+      </small>
+     </article>
+     <div>
+      <article class="card">
+       <h2>
+        Reportes por tipo de fenómeno
+       </h2>
+       <div class="muted">
+        Número de reportes
+       </div>
+       <div id="bars" style="margin-top:25px">
+        Sin reportes cargados
+       </div>
+      </article>
+      <article class="card">
+       <h2>
+        Reportar incidencia
+       </h2>
+       <p class="muted">
+        Para colaboradores de Los Andes
+       </p>
+       <p>
+        Registra una incidencia climatológica en tu zona.
+       </p>
+       <button class="primary" id="reportCardBtn">
+        Abrir formulario ↗
+       </button>
+      </article>
+     </div>
+    </div>
+   </section>
+   <section hidden="" id="noticias">
+    <article class="card">
+     <h1>
+      Noticias FEN — Monitoreo de peligros
+     </h1>
+     <p class="muted">
+      Esta sección requiere una fuente de noticias o un servicio de monitoreo configurado.
+     </p>
+     <div class="stats">
+      <div class="stat">
+       <div class="num">
+        —
+       </div>
+       Registros
+      </div>
+      <div class="stat">
+       <div class="num">
+        —
+       </div>
+       Alertas preventivas
+      </div>
+      <div class="stat">
+       <div class="num">
+        —
+       </div>
+       Eventos ocurridos
+      </div>
+      <div class="stat">
+       <div class="num">
+        —
+       </div>
+       Departamentos con novedades
+      </div>
+     </div>
+    </article>
+   </section>
+   <section hidden="" id="dashboard">
+    <article class="card">
+     <h1>
+      Dashboard de incidencias
+     </h1>
+     <p class="muted">
+      Vista demostrativa con los registros enviados durante esta sesión. Para mostrar datos históricos del Excel, configura un servicio de lectura autenticado.
+     </p>
+     <table>
+      <thead>
+       <tr>
+        <th>
+         Fecha
+        </th>
+        <th>
+         Departamento
+        </th>
+        <th>
+         Distrito
+        </th>
+        <th>
+         Fenómeno
+        </th>
+       </tr>
+      </thead>
+      <tbody id="rows">
+       <tr>
+        <td colspan="4">
+         Sin registros en esta sesión
+        </td>
+       </tr>
+      </tbody>
+     </table>
+    </article>
+   </section>
+  </main>
+  <footer>
+   Monitor FEN · Caja Los Andes · Prototipo de interfaz
+  </footer>
+  <div class="modalback" id="back">
+   <div aria-labelledby="formTitle" aria-modal="true" class="modal" role="dialog">
+    <div class="modalhead">
+     <div>
+      <h2 id="formTitle">
+       Reporte de incidencias - Fenómeno El Niño
+      </h2>
+      <p class="muted">
+       Gerencia de Riesgos · Los Andes
+      </p>
+     </div>
+     <button aria-label="Cerrar" class="close" id="close">
+      ×
+     </button>
+    </div>
+    <form id="form">
+     <div class="formgrid">
+      <div>
+       <label>
+        Región *
+       </label>
+       <select name="region" required="">
+        <option value="">
+         Selecciona
+        </option>
+        <option>
+         Puno Sur
+        </option>
+        <option>
+         Arequipa
+        </option>
+        <option>
+         Cusco
+        </option>
+        <option>
+         Otra región
+        </option>
+       </select>
+      </div>
+      <div>
+       <label>
+        Departamento *
+       </label>
+       <select id="departamento" name="departamento" required="">
+        <option value="">
+         Selecciona
+        </option>
+       </select>
+      </div>
+      <div>
+       <label>
+        Provincia *
+       </label>
+       <input name="provincia" placeholder="Provincia" required=""/>
+      </div>
+      <div>
+       <label>
+        Distrito *
+       </label>
+       <input name="distrito" placeholder="Distrito" required=""/>
+      </div>
+      <div>
+       <label>
+        DNI del colaborador *
+       </label>
+       <input inputmode="numeric" maxlength="8" name="dni" pattern="[0-9]{8}" placeholder="8 dígitos" required=""/>
+      </div>
+      <div>
+       <label>
+        Nombre del colaborador *
+       </label>
+       <input name="nombre" required=""/>
+      </div>
+      <div>
+       <label>
+        Gerencia *
+       </label>
+       <select name="gerencia" required="">
+        <option value="">
+         Selecciona
+        </option>
+        <option>
+         Gerencia de Riesgos
+        </option>
+        <option>
+         Gerencia de Negocios
+        </option>
+        <option>
+         Gerencia de Operaciones
+        </option>
+        <option>
+         Gerencia de Tecnología
+        </option>
+        <option>
+         Otra
+        </option>
+       </select>
+      </div>
+      <div>
+       <label>
+        Tipo de fenómeno climatológico *
+       </label>
+       <select name="fenomeno" required="">
+        <option value="">
+         Selecciona
+        </option>
+        <option>
+         Desborde de río
+        </option>
+        <option>
+         Inundación
+        </option>
+        <option>
+         Huaico
+        </option>
+        <option>
+         Lluvias intensas
+        </option>
+        <option>
+         Deslizamiento
+        </option>
+        <option>
+         Helada
+        </option>
+        <option>
+         Sequía
+        </option>
+        <option>
+         Otro
+        </option>
+       </select>
+      </div>
+      <div>
+       <label>
+        Fecha del evento *
+       </label>
+       <input name="fecha" required="" type="date"/>
+      </div>
+      <div class="wide">
+       <label>
+        Comentario
+       </label>
+       <textarea name="comentario" placeholder="Describe la incidencia"></textarea>
+      </div>
+     </div>
+     <p class="notice" id="status">
+      Los datos se enviarán a OneDrive mediante Power Automate.
+     </p>
+     <div class="actions">
+      <button class="secondary" id="cancel" type="button">
+       Cancelar
+      </button>
+      <button class="primary" id="submit" type="submit">
+       Enviar reporte
+      </button>
+     </div>
+    </form>
+   </div>
+  </div>
+  <script>
+   const CONFIG={
+    endpoint:'/api/report'
+};
+const depts=['Amazonas','Áncash','Apurímac','Arequipa','Ayacucho','Cajamarca','Callao','Cusco','Huancavelica','Huánuco','Ica','Junín','La Libertad','Lambayeque','Lima','Loreto','Madre de Dios','Moquegua','Pasco','Piura','Puno','San Martín','Tacna','Tumbes','Ucayali'];
+const dep=document.getElementById('departamento'),filter=document.getElementById('filterDept');
+depts.forEach(d=>{
+    dep.add(new Option(d,d));filter.add(new Option(d,d))
+});
+const back=document.getElementById('back');
+const open=()=>{
+    back.classList.add('open');
+    document.querySelector('[name=region]').focus()
+},close=()=>back.classList.remove('open');
+document.getElementById('reportBtn').onclick=open;
+document.getElementById('reportCardBtn').onclick=open;
+document.getElementById('close').onclick=close;
+document.getElementById('cancel').onclick=close;
+back.addEventListener('click',e=>{
+    if(e.target===back)close()
+});
+document.addEventListener('keydown',e=>{
+    if(e.key==='Escape')close()
+});
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{
+    document.querySelectorAll('main section').forEach(s=>s.hidden=s.id!==b.dataset.tab);document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('active',x===b))
+});
+let reports=[];
+function update(){
+    document.getElementById('total').textContent=reports.length;
+    document.getElementById('deptCount').textContent=new Set(reports.map(r=>r.departamento)).size;
+    document.getElementById('districtCount').textContent=new Set(reports.map(r=>r.distrito)).size;
+    document.getElementById('lastDate').textContent=reports.at(-1)?.fecha||'—';
+    let data=reports.filter(r=>filter.value==='Todo el Perú'||r.departamento===filter.value);
+    let counts={
+    };
+    data.forEach(r=>counts[r.fenomeno]=(counts[r.fenomeno]||0)+1);
+    document.getElementById('bars').innerHTML=Object.entries(counts).map(([k,v])=>`<p>${k} · ${v}</p><div style="background:#f4f4f6;height:22px;width:${100*v/Math.max(...Object.values(counts))}%"></div>`).join('')||'Sin reportes cargados';
+    document.getElementById('rows').innerHTML=reports.map(r=>`<tr><td>${escapeHtml(r.fecha)}</td><td>${escapeHtml(r.departamento)}</td><td>${escapeHtml(r.distrito)}</td><td>${escapeHtml(r.fenomeno)}</td></tr>`).join('')||'<tr><td colspan="4">Sin registros en esta sesión</td></tr>'
+}
+function escapeHtml(s){
+    return String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}filter.onchange = update;
+
+// Envía únicamente al servidor local: la URL firmada nunca está en el navegador.
+document.getElementById('form').addEventListener('submit', async (event) => {
+    event.preventDefault();
+    const form = event.currentTarget;
+    const values = Object.fromEntries(new FormData(form));
+    const status = document.getElementById('status');
+    const button = document.getElementById('submit');
+
+    const payload = {
+        Region: values.region,
+        Departamento: values.departamento,
+        Provincia: values.provincia,
+        Distrito: values.distrito,
+        DNI: values.dni,
+        Nombre: values.nombre,
+        Gerencia: values.gerencia,
+        TipoFenomeno: values.fenomeno,
+        FechaEvento: values.fecha,
+        Comentario: values.comentario || ''
+    };
+
+    button.disabled = true;
+    status.textContent = 'Enviando reporte a OneDrive…';
+
+    try {
+        const response = await fetch(CONFIG.endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+        const result = await response.json().catch(() => ({}));
+        if (!response.ok || result.success !== true) {
+            throw new Error(result.message || `Error HTTP ${response.status}`);
+        }
+        reports.push(values);
+        update();
+        form.reset();
+        close();
+        alert('Reporte registrado correctamente en OneDrive.');
+        status.textContent = 'Los datos se enviarán a OneDrive mediante Power Automate.';
+    } catch (error) {
+        status.textContent = `No se pudo confirmar el guardado: ${error.message}`;
+    } finally {
+        button.disabled = false;
+    }
+});
+  </script>
+ </body>
+</html>
+
