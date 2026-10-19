@@ -507,16 +507,16 @@ footer{
        </select>
       </div>
       <div>
-       <label>
-        Provincia *
-       </label>
-       <input name="provincia" placeholder="Provincia" required=""/>
+        <label>Provincia *</label>
+        <select id="provincia" name="provincia" required disabled>
+            <option value="">Selecciona un departamento</option>
+        </select>
       </div>
       <div>
-       <label>
-        Distrito *
-       </label>
-       <input name="distrito" placeholder="Distrito" required=""/>
+        <label>Distrito *</label>
+        <select id="distrito" name="distrito" required disabled>
+            <option value="">Selecciona una provincia</option>
+        </select>
       </div>
       <div>
        <label>
@@ -620,11 +620,71 @@ footer{
    const CONFIG={
     endpoint:'/api/report'
 };
-const depts=['Amazonas','Áncash','Apurímac','Arequipa','Ayacucho','Cajamarca','Callao','Cusco','Huancavelica','Huánuco','Ica','Junín','La Libertad','Lambayeque','Lima','Loreto','Madre de Dios','Moquegua','Pasco','Piura','Puno','San Martín','Tacna','Tumbes','Ucayali'];
-const dep=document.getElementById('departamento'),filter=document.getElementById('filterDept');
-depts.forEach(d=>{
-    dep.add(new Option(d,d));filter.add(new Option(d,d))
+const dep = document.getElementById('departamento');
+const provincia = document.getElementById('provincia');
+const distrito = document.getElementById('distrito');
+const filter = document.getElementById('filterDept');
+
+let ubigeos = {};
+
+function limpiarSelect(select, mensaje) {
+  select.replaceChildren(new Option(mensaje, ''));
+  select.disabled = true;
+}
+
+// Cargar el catálogo nacional desde Vercel
+async function cargarUbigeos() {
+  try {
+    const respuesta = await fetch('/ubigeo.json');
+
+    if (!respuesta.ok) {
+      throw new Error(`HTTP ${respuesta.status}`);
+    }
+
+    ubigeos = await respuesta.json();
+
+    for (const [clave, departamento] of Object.entries(ubigeos)) {
+      dep.add(new Option(departamento.nombre, departamento.nombre));
+      filter.add(new Option(departamento.nombre, departamento.nombre));
+    }
+  } catch (error) {
+    console.error('Error al cargar UBIGEO:', error);
+    dep.replaceChildren(
+      new Option('No se pudo cargar el catálogo', '')
+    );
+    dep.disabled = true;
+  }
+}
+
+// Departamento -> Provincia
+dep.addEventListener('change', () => {
+  limpiarSelect(provincia, 'Selecciona una provincia');
+  limpiarSelect(distrito, 'Selecciona un distrito');
+
+  const provincias = ubigeos[dep.value.toLocaleUpperCase('es-PE')]?.provincias || {};
+
+  for (const nombre of Object.keys(provincias)) {
+    provincia.add(new Option(nombre, nombre));
+  }
+
+  provincia.disabled = Object.keys(provincias).length === 0;
 });
+
+// Provincia -> Distrito
+provincia.addEventListener('change', () => {
+  limpiarSelect(distrito, 'Selecciona un distrito');
+
+  const distritos =
+    ubigeos[dep.value.toLocaleUpperCase('es-PE')]?.provincias[provincia.value]?.distritos || [];
+
+  for (const item of distritos) {
+    distrito.add(new Option(item.nombre, item.nombre));
+  }
+
+  distrito.disabled = distritos.length === 0;
+});
+
+cargarUbigeos();
 const back=document.getElementById('back');
 const open=()=>{
     back.classList.add('open');
@@ -696,6 +756,9 @@ document.getElementById('form').addEventListener('submit', async (event) => {
         reports.push(values);
         update();
         form.reset();
+        limpiarSelect(provincia, 'Selecciona un departamento');
+        limpiarSelect(distrito, 'Selecciona una provincia');
+        close();
         close();
         alert('Reporte registrado correctamente en OneDrive.');
         status.textContent = 'Los datos se enviarán a OneDrive mediante Power Automate.';
