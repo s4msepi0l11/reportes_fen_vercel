@@ -531,63 +531,29 @@ footer{
        <input name="nombre" required=""/>
       </div>
       <div>
-       <label>
-        Gerencia *
-       </label>
-       <select name="gerencia" required="">
-        <option value="">
-         Selecciona
-        </option>
-        <option>
-         Gerencia de Riesgos
-        </option>
-        <option>
-         Gerencia de Negocios
-        </option>
-        <option>
-         Gerencia de Operaciones
-        </option>
-        <option>
-         Gerencia de Tecnología
-        </option>
-        <option>
-         Otra
-        </option>
-       </select>
+       <label>Gerencia *</label>
+        <select name="gerencia" required>
+            <option value="">Selecciona</option>
+            <option value="Riesgos">Riesgos</option>
+            <option value="Cobranzas">Cobranzas</option>
+            <option value="Negocios">Negocios</option>
+        </select>
       </div>
       <div>
-       <label>
-        Tipo de fenómeno climatológico *
-       </label>
-       <select name="fenomeno" required="">
-        <option value="">
-         Selecciona
-        </option>
-        <option>
-         Desborde de río
-        </option>
-        <option>
-         Inundación
-        </option>
-        <option>
-         Huaico
-        </option>
-        <option>
-         Lluvias intensas
-        </option>
-        <option>
-         Deslizamiento
-        </option>
-        <option>
-         Helada
-        </option>
-        <option>
-         Sequía
-        </option>
-        <option>
-         Otro
-        </option>
-       </select>
+       <label>Tipo de fenómeno climatológico *</label>
+        <select name="fenomeno" required>
+            <option value="">Selecciona</option>
+            <option value="Lluvias intensas">Lluvias intensas</option>
+            <option value="Huaico">Huaico</option>
+            <option value="Inundación">Inundación</option>
+            <option value="Desborde de río">Desborde de río</option>
+            <option value="Deslizamiento / derrumbe">Deslizamiento / derrumbe</option>
+            <option value="Oleaje anómalo">Oleaje anómalo</option>
+            <option value="Sequía">Sequía</option>
+            <option value="Heladas / friaje">Heladas / friaje</option>
+            <option value="Vientos fuertes">Vientos fuertes</option>
+            <option value="Otros">Otros</option>
+        </select>
       </div>
       <div>
        <label>
@@ -758,6 +724,7 @@ document.getElementById('form').addEventListener('submit', async (event) => {
         form.reset();
         limpiarSelect(provincia, 'Selecciona un departamento');
         limpiarSelect(distrito, 'Selecciona una provincia');
+        close();
         close();
         alert('Reporte registrado correctamente en OneDrive.');
         status.textContent = 'Los datos se enviarán a OneDrive mediante Power Automate.';
