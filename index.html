@@ -507,7 +507,6 @@ footer{
        </select>
       </div>
       <div>
-<<<<<<< HEAD
         <label>Provincia *</label>
         <select id="provincia" name="provincia" required disabled>
             <option value="">Selecciona un departamento</option>
@@ -518,18 +517,6 @@ footer{
         <select id="distrito" name="distrito" required disabled>
             <option value="">Selecciona una provincia</option>
         </select>
-=======
-       <label>
-        Provincia *
-       </label>
-       <input name="provincia" placeholder="Provincia" required=""/>
-      </div>
-      <div>
-       <label>
-        Distrito *
-       </label>
-       <input name="distrito" placeholder="Distrito" required=""/>
->>>>>>> origin/main
       </div>
       <div>
        <label>
@@ -633,7 +620,6 @@ footer{
    const CONFIG={
     endpoint:'/api/report'
 };
-<<<<<<< HEAD
 const dep = document.getElementById('departamento');
 const provincia = document.getElementById('provincia');
 const distrito = document.getElementById('distrito');
@@ -699,13 +685,6 @@ provincia.addEventListener('change', () => {
 });
 
 cargarUbigeos();
-=======
-const depts=['Amazonas','Áncash','Apurímac','Arequipa','Ayacucho','Cajamarca','Callao','Cusco','Huancavelica','Huánuco','Ica','Junín','La Libertad','Lambayeque','Lima','Loreto','Madre de Dios','Moquegua','Pasco','Piura','Puno','San Martín','Tacna','Tumbes','Ucayali'];
-const dep=document.getElementById('departamento'),filter=document.getElementById('filterDept');
-depts.forEach(d=>{
-    dep.add(new Option(d,d));filter.add(new Option(d,d))
-});
->>>>>>> origin/main
 const back=document.getElementById('back');
 const open=()=>{
     back.classList.add('open');
@@ -777,12 +756,8 @@ document.getElementById('form').addEventListener('submit', async (event) => {
         reports.push(values);
         update();
         form.reset();
-<<<<<<< HEAD
         limpiarSelect(provincia, 'Selecciona un departamento');
         limpiarSelect(distrito, 'Selecciona una provincia');
-        close();
-=======
->>>>>>> origin/main
         close();
         alert('Reporte registrado correctamente en OneDrive.');
         status.textContent = 'Los datos se enviarán a OneDrive mediante Power Automate.';
