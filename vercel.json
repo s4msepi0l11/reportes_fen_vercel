@@ -1,0 +1,7 @@
+{
+  "rewrites": [
+    { "source": "/api/auth/:path*", "destination": "https://riesgos-api.vercel.app/api/auth/:path*" },
+    { "source": "/api/creditos", "destination": "https://riesgos-api.vercel.app/api/creditos" },
+    { "source": "/api/creditos/:path*", "destination": "https://riesgos-api.vercel.app/api/creditos/:path*" }
+  ]
+}
