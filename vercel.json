@@ -1,5 +1,12 @@
 
 {
+  "redirects": [
+    {
+      "source": "/",
+      "destination": "https://losandes-riesgos.vercel.app/",
+      "permanent": false
+    }
+  ],
   "rewrites": [
     {
       "source": "/api/auth/:path*",
@@ -16,10 +23,6 @@
     {
       "source": "/api/owner/:path*",
       "destination": "https://riesgos-api.vercel.app/api/owner/:path*"
-    },
-    {
-      "source": "/",
-      "destination": "https://riesgos-api.vercel.app/api/app"
     }
   ]
 }
